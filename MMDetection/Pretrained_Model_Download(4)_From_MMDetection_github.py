@@ -5,3 +5,6 @@
   
   
  #Link Address:https://github.com/open-mmlab/mmdetection/tree/master/configs/faster_rcnn
+
+!ls -lia /content/mmdetection/checkpoints  # to check faster_rcnn pretrained model downloaded by approaching directly
+
