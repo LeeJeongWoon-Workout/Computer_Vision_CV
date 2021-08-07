@@ -1,7 +1,7 @@
 from mmdet.datasets import build_dataset
 from mmdet.models import build_detector
 from mmdet.apis import train_detector
-
+#내가 가진 자료로 모델을 pre_trained 하는 과정
 # train용 Dataset 생성. 
 datasets = [build_dataset(cfg.data.train)]
 
