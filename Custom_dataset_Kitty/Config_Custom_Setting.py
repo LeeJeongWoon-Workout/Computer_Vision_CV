@@ -1,3 +1,9 @@
+#이제 config의 내용들을 kittytinydataset으로 바꿀 것입니다.
+#첫 번째로 바꾸어야 하는 것은 데이터셋 전체의 타입과 루트입니다. 이것을 입력해야 라이브러리가 데이터를 찾을 수 있습니다.
+#두 번째로 훈련 데이터의 타입,주소,anootation,prefix 정보들입니다.
+#세 번째로 validation 데이터
+# 마지막으로 테스트 데이터입니다.
+
 from mmcv import Config
 
 cfg = Config.fromfile(config_file)
@@ -29,7 +35,7 @@ cfg.data.test.img_prefix = 'training/image_2'
 cfg.model.roi_head.bbox_head.num_classes = 4
 # pretrained 모델
 cfg.load_from = 'checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth'
-
+#우리는 faster_rcnn r50 pretrained 모델을 가져와서 새롭게 훈련시킬 것입니다.
 # 학습 weight 파일로 로그를 저장하기 위한 디렉토리 설정. 
 cfg.work_dir = './tutorial_exps'
 
