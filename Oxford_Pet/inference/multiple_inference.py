@@ -1,3 +1,7 @@
+val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
+val_paths = val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
+val_imgs = [cv2.imread(x) for x in val_paths]
+
 from mmdet.apis import show_result_pyplot
 
 checkpoint_file = '/mydrive/pet_work_dir/epoch_5.pth'
@@ -11,10 +15,13 @@ img = cv2.imread('/content/data/images/Abyssinian_88.jpg')
 result = inference_detector(model_ckpt, img)
 show_result_pyplot(model_ckpt, img, result, score_thr=0.3)
 
-val_df['img_path'] = '/content/data/images/' + val_df['img_name'] + '.jpg'
+val_df['img_path'] = '/content/data/images/' + val_df['image_id'] + '.jpg'
 val_df.head()
 
 results = inference_detector(model_ckpt, val_imgs)
+
+PET_CLASSES = pet_df['class_name'].unique().tolist()
+labels_to_names_seq = {i:k for i, k in enumerate(PET_CLASSES)}
 
 PET_CLASSES = pet_df['class_name'].unique().tolist()
 labels_to_names_seq = {i:k for i, k in enumerate(PET_CLASSES)}
@@ -66,6 +73,7 @@ detected_img = cv2.cvtColor(detected_img, cv2.COLOR_BGR2RGB)
 plt.figure(figsize=(12, 12))
 plt.imshow(detected_img)
 
+
 import matplotlib.pyplot as plt
 import cv2
 %matplotlib inline 
@@ -82,8 +90,9 @@ def show_detected_images(model, img_arrays, ncols=5):
 show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
 show_detected_images(model_ckpt, val_imgs[5:10], ncols=5)
 
+
 val_paths = val_df[val_df['img_path'].str.contains('Persian')]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
 show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
-show_detected_images(model_ckpt, val_imgs[5:10], ncols=5)
+show_detected_images(model_ckpt, val_imgs[5:9], ncols=5)
