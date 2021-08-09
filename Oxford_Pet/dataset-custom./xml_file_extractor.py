@@ -17,22 +17,23 @@ import xml.etree.ElementTree as ET
 def get_bboxes_frm_xml_test(xml_file):
   tree=ET.parse(xml_file)
   root=tree.getroot()
+
   bbox_names=[]
   bboxes=[]
 
-  for obj in root.finall('object'):
-
-    bbox_name=obj.fine('name').text
+  for obj in root.findall('object'):
+    name=obj.find('name').text
     xmlbox=obj.find('bndbox')
+
     x1=int(xmlbox.find('xmin').text)
     y1=int(xmlbox.find('ymin').text)
     x2=int(xmlbox.find('xmax').text)
     y2=int(xmlbox.find('ymax').text)
 
-    bbox_names.append(bbox_name)
+    bbox_names.append(name)
     bboxes.append([x1,y1,x2,y2])
 
   return bbox_names,bboxes
 
 
-get_bboxes_from_xml_test('./data/annotations/xmls/Abyssinian_1.xml')
+print(get_bboxes_frm_xml_test('./data/annotations/xmls/Abyssinian_10.xml'))
