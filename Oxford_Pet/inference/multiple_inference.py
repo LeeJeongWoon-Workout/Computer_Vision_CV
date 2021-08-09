@@ -1,3 +1,6 @@
+val_df['img_path'] = '/content/data/images/' + val_df['img_name'] + '.jpg'
+val_df.head()
+
 val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
 val_paths = val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
