@@ -88,12 +88,12 @@ def show_detected_images(model, img_arrays, ncols=50):
       axs[i].imshow(detected_img)
 
         
-show_detected_images(model_ckpt, val_imgs[:100], ncols=100)
+show_detected_images(model_ckpt, val_imgs[:10], ncols=10)
 
 
 val_paths = val_df[val_df['img_path']]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
-show_detected_images(model_ckpt, val_imgs[:100], ncols=100)
+show_detected_images(model_ckpt, val_imgs[:10], ncols=10)
 
 
