@@ -287,6 +287,12 @@ model.CLASSES = datasets[0].CLASSES
 mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
 # epochs는 config의 runner 파라미터로 지정됨. 기본 12회 
 train_detector(model, datasets, cfg, distributed=False, validate=True)
+
+'''------------------------------------------------------------------------------------------------------------------:make_model'''
+checkpoint_file = '/mydrive/pet_work_dir/epoch_5.pth'
+
+# checkpoint 저장된 model 파일을 이용하여 모델을 생성, 이때 Config는 위에서 update된 config 사용. 
+model_ckpt = init_detector(cfg, checkpoint_file, device='cuda:0')
 '''------------------------------------------------------------------------------------------------------------------: visualization'''
 
 '''design
@@ -297,7 +303,7 @@ train_detector(model, datasets, cfg, distributed=False, validate=True)
 5. show_detected_image 함수 생성
 '''
 #이미지 주소 colum을 따로 만들어서 저장한다.
-val_df['img_path'] = '/content/data/images/' + val_df['image_id'] + '.jpg'
+val_df['img_path'] = '/content/data/images/' + val_df['img_name'] + '.jpg'
 val_df.head()
 
 #val_df csv 파일에서 'img_path' 부분중 'Abyssinian'을 포함하는 
@@ -355,14 +361,15 @@ def get_detected_img(model, img_array,  score_threshold=0.3, is_print=True):
 
 import matplotlib.pyplot as plt
 
-img_arr = cv2.imread('/content/data/images/Abyssinian_88.jpg')
-detected_img = get_detected_img(model, img_arr,  score_threshold=0.3, is_print=True)
-# detect 입력된 이미지는 bgr임. 이를 최종 출력시 rgb로 변환 
-detected_img = cv2.cvtColor(detected_img, cv2.COLOR_BGR2RGB)
 
-plt.figure(figsize=(12, 12))
-plt.imshow(detected_img)
 
+'''show_detected_images : 그래프화 함수
+1. 모양,축 설정 figure,axis=plt.subplot(figsize=(),nrows=1,ncols=ncols)
+2. 열루프 실행
+3. 각 img_arrays별로 detected_img 디텍트 실행
+4. cv2.cvtColor 로 BGR 를 RGB로 변경
+5. axs[i].imshow(detected_img) -> 그래프 표현
+'''
 
 import matplotlib.pyplot as plt
 import cv2
@@ -385,20 +392,11 @@ def show_detected_images(model, img_arrays, ncols=50):
       axs[i].imshow(detected_img)
 
         
-show_detected_images(model_ckpt, val_imgs[:10], ncols=10)
 
 
 val_paths = val_df['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
-show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
-show_detected_images(model_ckpt, val_imgs[5:10], ncols=5)
-show_detected_images(model_ckpt, val_imgs[10:15], ncols=5)
-show_detected_images(model_ckpt, val_imgs[15:20], ncols=5)
-show_detected_images(model_ckpt, val_imgs[20:25], ncols=5)
-show_detected_images(model_ckpt, val_imgs[25:30], ncols=5)
-show_detected_images(model_ckpt, val_imgs[30:35], ncols=5)
-show_detected_images(model_ckpt, val_imgs[35:40], ncols=5)
-show_detected_images(model_ckpt, val_imgs[40:45], ncols=5)
-show_detected_images(model_ckpt, val_imgs[45:50], ncols=5)
+for i in range(0,500,5):
+  show_detected_images(model_ckpt, val_imgs[i:5*(i+1)], ncols=5)
 
