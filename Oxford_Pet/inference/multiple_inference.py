@@ -1,8 +1,9 @@
 
+#이미지 주소 colum을 따로 만들어서 저장한다.
 val_df['img_path'] = '/content/data/images/' + val_df['image_id'] + '.jpg'
 val_df.head()
 
-val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
+#val_df csv 파일에서 'img_path' 부분중 'Abyssinian'을 포함하는 
 val_paths = val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
@@ -16,19 +17,15 @@ model_ckpt = init_detector(cfg, checkpoint_file, device='cuda:0')
 img = cv2.imread('/content/data/images/Abyssinian_88.jpg')
 #model_ckpt.cfg = cfg
 
+
 result = inference_detector(model_ckpt, img)
 show_result_pyplot(model_ckpt, img, result, score_thr=0.3)
-
-val_df['img_path'] = '/content/data/images/' + val_df['image_id'] + '.jpg'
-val_df.head()
 
 results = inference_detector(model_ckpt, val_imgs)
 
 PET_CLASSES = pet_df['class_name'].unique().tolist()
 labels_to_names_seq = {i:k for i, k in enumerate(PET_CLASSES)}
 
-PET_CLASSES = pet_df['class_name'].unique().tolist()
-labels_to_names_seq = {i:k for i, k in enumerate(PET_CLASSES)}
 
 # model과 원본 이미지 array, filtering할 기준 class confidence score를 인자로 가지는 inference 시각화용 함수 생성. 
 def get_detected_img(model, img_array,  score_threshold=0.3, is_print=True):
@@ -82,7 +79,7 @@ import matplotlib.pyplot as plt
 import cv2
 %matplotlib inline 
 
-def show_detected_images(model, img_arrays, ncols=5):
+def show_detected_images(model, img_arrays, ncols=50):
     figure, axs = plt.subplots(figsize=(22, 6), nrows=1, ncols=ncols)
     for i in range(ncols):
       detected_img = get_detected_img(model, img_arrays[i],  score_threshold=0.5, is_print=True)
@@ -91,12 +88,12 @@ def show_detected_images(model, img_arrays, ncols=5):
       axs[i].imshow(detected_img)
 
         
-show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
-show_detected_images(model_ckpt, val_imgs[5:10], ncols=5)
+show_detected_images(model_ckpt, val_imgs[:100], ncols=100)
 
 
-val_paths = val_df[val_df['img_path'].str.contains('Persian')]['img_path'].values
+val_paths = val_df[val_df['img_path']]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
-show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
-show_detected_images(model_ckpt, val_imgs[5:9], ncols=5)
+show_detected_images(model_ckpt, val_imgs[:100], ncols=100)
+
+
