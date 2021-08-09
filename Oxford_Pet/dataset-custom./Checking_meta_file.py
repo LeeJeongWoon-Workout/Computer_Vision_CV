@@ -7,7 +7,7 @@ csv 파일로 만든후 sklear.model_selection으로 나눈 다음 to_csv를 통
 2.apply(lambda로) class_name을 담는 새로운 column 생성
 3. sklearn.model_selection, train_test_split로 train_df와 val_df 를 만든다.
 4. sort_values(by='img_name')
-5. 
+5. ~['img_name'].to_csv('./data/train.txt',~) 로 훈련용,val용 txt 파일을 만든다.
 '''
 
 import pandas as pd
