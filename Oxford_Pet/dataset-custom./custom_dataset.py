@@ -12,6 +12,26 @@ import xml.etree.ElementTree as ET
 
 PET_CLASSES = pet_df['class_name'].unique().tolist()
 
+  #ann 어떤걸 train,validation으로 쓸 것인지 알려주는 것 오직 하나만 있어야 한다.
+  #prefix: 이미지가 들어 있는 파일 -> custom dataset에서 def__init__ 을 거쳐 data_root와 join 되어 절대 경로가 된다.
+  #data_root= 거기까지 가기위한 루트들
+
+  '''mid dataset load_annotation 설계 과정
+  
+  1. 클레스 별 번호 생성
+  2. ann 파일로 부터 받은 이미지 파일을 루프에 넣어 파일이름,cv2를 이용한 너비,높이
+  3. 클래스 명과 좌표를 얻기 위해서는 xml 파일을 훑어야 하므로 label
+  prefix를 설정한다. label_prefix는 images를 annotations로 바꾼다.
+  4. xml파일에 접근하기 위한 절대 경로를 설정한다.
+  5. 오류가 발생하지 않기 위해 
+        if not osp.exists(anno_xml_file):
+        continue
+
+  6.get_bboxes_from_(prefix,나머지 파일 이름) 을 실행한다.
+  7. 나머지 이하동일 (넘파이로 바꾸는 것 잊지 않기)
+  '''
+
+
 @DATASETS.register_module(force=True)
 class PetDataset(CustomDataset):
   CLASSES = PET_CLASSES
