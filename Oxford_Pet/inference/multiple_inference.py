@@ -1,3 +1,10 @@
+'''design
+1. img_path열을 새롭게 만든다.
+2. val_paths=val_df[val_df['img_path'].str.contains('~')]['img_path'].values  ~을 포함하는 이미지 주소를 numpy로 보관한다.
+3. val_imgs=[cv2.imread(x) for x in val_paths] 로 주소의 이미지들을 cv2 로 numpy 화 한다.
+4. get_detected_image 함수 생성
+5. show_detected_image 함수 생성
+'''
 
 #이미지 주소 colum을 따로 만들어서 저장한다.
 val_df['img_path'] = '/content/data/images/' + val_df['image_id'] + '.jpg'
@@ -7,24 +14,16 @@ val_df.head()
 val_paths = val_df[val_df['img_path'].str.contains('Abyssinian')]['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
-from mmdet.apis import show_result_pyplot
-
-checkpoint_file = '/mydrive/pet_work_dir/epoch_5.pth'
-
-# checkpoint 저장된 model 파일을 이용하여 모델을 생성, 이때 Config는 위에서 update된 config 사용. 
-model_ckpt = init_detector(cfg, checkpoint_file, device='cuda:0')
-# BGR Image 사용 
-img = cv2.imread('/content/data/images/Abyssinian_88.jpg')
-#model_ckpt.cfg = cfg
-
-
-result = inference_detector(model_ckpt, img)
-show_result_pyplot(model_ckpt, img, result, score_thr=0.3)
-
-results = inference_detector(model_ckpt, val_imgs)
-
 PET_CLASSES = pet_df['class_name'].unique().tolist()
 labels_to_names_seq = {i:k for i, k in enumerate(PET_CLASSES)}
+
+
+'''get_detected_img(model,img_array,socre_threshold,is_print) 함수 설계도
+1. 이미지 복사,색깔설정, 모델과 이미지로 inference 실시 -> results는 37rows를 가진 numpy 37은 우리가 roi-head를 petdataset으로 조정하고 37개의 클래스로 설정하였음
+2. enumerate(results) 루프 실행( 수행 첫 숫자는 이미지 클래스를 나타내고 result는 그 분류에 들어가는 좌표numpy)
+3. result_filtered = result[np.where(result[:, 4] > score_threshold)]
+4. result_filtered 루프를 실행하고 cv2.rentangle,caption,cv2.puttext 
+'''
 
 
 # model과 원본 이미지 array, filtering할 기준 class confidence score를 인자로 가지는 inference 시각화용 함수 생성. 
@@ -79,6 +78,14 @@ import matplotlib.pyplot as plt
 import cv2
 %matplotlib inline 
 
+'''show_detected_images : 그래프화 함수
+1. 모양,축 설정 figure,axis=plt.subplot(figsize=(),nrows=1,ncols=ncols)
+2. 열루프 실행
+3. 각 img_arrays별로 detected_img 디텍트 실행
+4. cv2.cvtColor 로 BGR 를 RGB로 변경
+5. axs[i].imshow(detected_img) -> 그래프 표현
+'''
+
 def show_detected_images(model, img_arrays, ncols=50):
     figure, axs = plt.subplots(figsize=(22, 6), nrows=1, ncols=ncols)
     for i in range(ncols):
@@ -91,9 +98,16 @@ def show_detected_images(model, img_arrays, ncols=50):
 show_detected_images(model_ckpt, val_imgs[:10], ncols=10)
 
 
-val_paths = val_df[val_df['img_path']]['img_path'].values
+val_paths = val_df['img_path'].values
 val_imgs = [cv2.imread(x) for x in val_paths]
 
-show_detected_images(model_ckpt, val_imgs[:10], ncols=10)
-
-
+show_detected_images(model_ckpt, val_imgs[:5], ncols=5)
+show_detected_images(model_ckpt, val_imgs[5:10], ncols=5)
+show_detected_images(model_ckpt, val_imgs[10:15], ncols=5)
+show_detected_images(model_ckpt, val_imgs[15:20], ncols=5)
+show_detected_images(model_ckpt, val_imgs[20:25], ncols=5)
+show_detected_images(model_ckpt, val_imgs[25:30], ncols=5)
+show_detected_images(model_ckpt, val_imgs[30:35], ncols=5)
+show_detected_images(model_ckpt, val_imgs[35:40], ncols=5)
+show_detected_images(model_ckpt, val_imgs[40:45], ncols=5)
+show_detected_images(model_ckpt, val_imgs[45:50], ncols=5)
