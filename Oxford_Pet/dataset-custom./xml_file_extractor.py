@@ -1,28 +1,31 @@
 #xml 파일에서 좌표와 파일 이름을 추춣하는 함수
 '''
-함수 설계
-1.xml.etree.ElementTree 임포트 (xml 파일을 읽고 정보를 가져올 수 있는 라이브러리)
-2.xml 파일을 인자로 받는 함수 선언
-3. tree 변수에 parse 값 입력 ET.parse 사용(xml이 파일로 존재한다면 parse로 받아야 한다.)
-,tree로 부터 getroot를 사용해서 root 값을 얻는다.(파일의 최상위 경로)
-4. bbox 이름과 bbox 좌표를 보관하는 리스트 객체 선언
-
-5.root.find('object') 루프 실행 -> 이름과 좌표 정보 추출하여 
-bbox_names,와 bboxes 정보를 채워 넣는다. -> 두 리스트 객체를 리턴 값으로 반환
+설계
+1.get_bboxes_from_xml(anno_dir,xml_file)
+osp.join 으로 anno_dir,xml_file을 합쳐 절대 경로를 만든다.
+2. 절대 경로를 기준으로 tree,root 객체를 생성한다.
+3. bbox_names,bboxes 리스트 객체 생성
+4. loop (root.findall('object))
+5. 클레스 명은 파일명에 있으므로 xml_file[:xml_file.rfind('_')] 문자열 함수 이용
+6. 나머지 'bndbox'에서 좌표 추출
+7. bbox_names,bboxes 반환
 '''
-import glob
+
 import xml.etree.ElementTree as ET
+import os.path as osp
 
-#annotation xml 파일 파싱해서 bbox정보 추출
-def get_bboxes_frm_xml_test(xml_file):
-  tree=ET.parse(xml_file)
+def get_bboxes_from_xml(anno_dir,xml_file):
+  anno_xml_file=osp.join(anno_dir,xml_file) #절대 경로
+  tree=ET.parse(anno_xml_file)
   root=tree.getroot()
-
   bbox_names=[]
   bboxes=[]
 
   for obj in root.findall('object'):
-    name=obj.find('name').text
+    #obj.find('name).text는 cat이나 dog를 반환
+    #object 클래스명은 파일명에서 추출
+    bbox_name=xml_file[:xml_file.rfind('_')]
+
     xmlbox=obj.find('bndbox')
 
     x1=int(xmlbox.find('xmin').text)
@@ -30,10 +33,7 @@ def get_bboxes_frm_xml_test(xml_file):
     x2=int(xmlbox.find('xmax').text)
     y2=int(xmlbox.find('ymax').text)
 
-    bbox_names.append(name)
+    bbox_names.append(bbox_name)
     bboxes.append([x1,y1,x2,y2])
-
+  
   return bbox_names,bboxes
-
-
-print(get_bboxes_frm_xml_test('./data/annotations/xmls/Abyssinian_10.xml'))
