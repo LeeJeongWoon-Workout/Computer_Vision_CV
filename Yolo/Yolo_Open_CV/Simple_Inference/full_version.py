@@ -183,9 +183,12 @@ def get_detected_img(cv_net, img_array, conf_threshold, nms_threshold, is_print=
                 class_ids.append(class_id)
                 confidences.append(float(confidence))
                 boxes.append([left, top, width, height])
-    
+    '''class_id,confidences,boxes를 종합적으로 정리하자면, 특정 물체가 있을 것으로 예상되는 여러 후보들이 있으면 각 후보마다 class를 class_id에 저장하고
+    confidence를 confidences에 저장하며 좌표(cv2에 넣기 위해 left,top,width,height) 정보를 집어 넣는다.
+    '''
     # NMS로 최종 filtering된 idxs를 이용하여 boxes, classes, confidences에서 해당하는 Object정보를 추출하고 시각화.
     idxs = cv2.dnn.NMSBoxes(boxes, confidences, conf_threshold, nms_threshold)
+    '''idxs의 의미는 NMS에서 최종적으로 선출된 bbox들을 class_ids의 인덱스로 출력하였다.'''
     if len(idxs) > 0:
         for i in idxs.flatten():
             box = boxes[i]
