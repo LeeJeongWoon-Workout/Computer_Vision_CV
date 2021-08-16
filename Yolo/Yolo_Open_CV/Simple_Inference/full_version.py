@@ -132,9 +132,6 @@ cv_outs type: <class 'list'> cv_outs의 내부 원소개수: 3
 
 '''
 함수 설계 : pre_trained 된 모델과 cv2로 array 처리된 이미지를 인자로 받아 최종적인 Object-Detection을 처리한다.
-
-단계
-1.
 '''
 def get_detected_img(cv_net, img_array, conf_threshold, nms_threshold, is_print=True):
   
@@ -206,7 +203,20 @@ def get_detected_img(cv_net, img_array, conf_threshold, nms_threshold, is_print=
         print('Detection 수행시간:',round(time.time() - start, 2),"초")
     return draw_img
   
+  '''NMS 수행 로직
+  1. Detected 된 bounding box별로 특정 Confidence threshold 이하
+    bounding box는 먼저 제거(confidence score < 0.5)
+  2. 가장 높은 confidence score를 가진 box 순으로 내림차순 정렬하고
+    아래 로직을 모든 box에 순차적으로 적용.
+    • 높은 confidence score를 가진 box와 겹치는 다른 box를 모두
+    조사하여 IOU가 특정 threshold 이상인 box를 모두 제거(예: 
+    IOU Threshold > 0.4 )
+   3. 남아 있는 box만 선택
   
+  >>
+  nms_threshold는 confidence가 가장 높은 bbox와 겹치는 정도를 나타내는데 많이 겹칠 수록 같은 사물을 가리키고 있기 때문에 없애는 것이 좋다.
+  이 값이 낮을 수록 많은 박스들이 사라질 것
+  '''
   
   
   
