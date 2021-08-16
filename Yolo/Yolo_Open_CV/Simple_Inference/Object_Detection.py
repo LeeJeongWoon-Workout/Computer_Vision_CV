@@ -45,6 +45,6 @@ for ix, output in enumerate(cv_outs):
             
             
 '''
-
-
+13X13 26X26 52X52 3개의 layer을 추출해야 한다. 또한 각 Layer마다 3개의 Feature_Pyramid가 있기 때문에
+(13*13*3,85) (26*26*3,85) (52*52*3,85)
 '''            
