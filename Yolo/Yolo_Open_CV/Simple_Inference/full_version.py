@@ -159,7 +159,7 @@ def get_detected_img(cv_net, img_array, conf_threshold, nms_threshold, is_print=
 
     class_ids = []
     confidences = []
-    boxes = []
+    boxes = [] #[left,top,width,height]를 담는다.
 
     # 3개의 개별 output layer별로 Detect된 Object들에 대해서 Detection 정보 추출 및 시각화 
     for ix, output in enumerate(cv_outs):
