@@ -22,3 +22,11 @@ weights 파일은 yolov3.pt, yolov3-tiny.pt, yolov3-spp.pt
 
 !cd yolov3;python detect.py --weights yolov3.pt --img 640 --conf 0.25 --source /content/data/Night_Day_Chase.mp4 \
                             --project=/content/data/run_video --exist-ok --line-thickness 1
+
+'''weights-? pretrained model,
+   conf-> confidence          
+   source-> image or video 
+   project-> output_restorate address
+   name-> file name
+   exist-> if exist do not make other file
+   '''
