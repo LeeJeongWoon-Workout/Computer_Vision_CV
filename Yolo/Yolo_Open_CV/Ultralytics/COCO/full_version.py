@@ -19,3 +19,6 @@ weights 파일은 yolov3.pt, yolov3-tiny.pt, yolov3-spp.pt
 '''
 
 '''------------------------------------------------------------------------------------Detection Inference 수행'''
+
+!cd yolov3;python detect.py --weights yolov3.pt --img 640 --conf 0.25 --source /content/data/Night_Day_Chase.mp4 \
+                            --project=/content/data/run_video --exist-ok --line-thickness 1
