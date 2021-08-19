@@ -17,3 +17,6 @@ def make_yolo_anno_file(df, tgt_images_dir, tgt_labels_dir):
 make_yolo_anno_file(train_df, '/content/ox_pet/images/train/', '/content/ox_pet/labels/train/')
 # val용 images와 labels annotation 생성. 
 make_yolo_anno_file(val_df, '/content/ox_pet/images/val/', '/content/ox_pet/labels/val/')
+
+
+!wget -O /content/ox_pet/ox_pet.yaml https://raw.githubusercontent.com/chulminkw/DLCV/master/data/util/ox_pet.yaml
