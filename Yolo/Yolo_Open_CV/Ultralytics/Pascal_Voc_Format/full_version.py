@@ -127,57 +127,25 @@ def convert_yolo_coord(object_name, img_width, img_height, x1, y1, x2, y2):
 import glob
 import xml.etree.ElementTree as ET
 
-# 1개의 voc xml 파일을 Yolo 포맷용 txt 파일로 변경하는 함수 
-def xml_to_txt(input_xml_file, output_txt_file, object_name):
-  # ElementTree로 입력 XML파일 파싱. 
-  tree = ET.parse(input_xml_file)
-  root = tree.getroot()
-  img_node = root.find('size')
-  # img_node를 찾지 못하면 종료
-  if img_node is None:
-    return None
-  # 원본 이미지의 너비와 높이 추출. 
-  img_width = int(img_node.find('width').text)
-  img_height = int(img_node.find('height').text)
+import shutil
 
-  # xml 파일내에 있는 모든 object Element를 찾음. 
-  value_str = None
-  with open(output_txt_file, 'w') as output_fpointer:
-    for obj in root.findall('object'):
-        # bndbox를 찾아서 좌상단(xmin, ymin), 우하단(xmax, ymax) 좌표 추출. 
-        xmlbox = obj.find('bndbox')
-        x1 = int(xmlbox.find('xmin').text)
-        y1 = int(xmlbox.find('ymin').text)
-        x2 = int(xmlbox.find('xmax').text)
-        y2 = int(xmlbox.find('ymax').text)
-        # 만약 좌표중에 하나라도 0보다 작은 값이 있으면 종료. 
-        if (x1 < 0) or (x2 < 0) or (y1 < 0) or (y2 < 0):
-          break
-        # object_name과 원본 좌표를 입력하여 Yolo 포맷으로 변환하는 convert_yolo_coord()함수 호출. 
-        class_id, cx_norm, cy_norm, w_norm, h_norm = convert_yolo_coord(object_name, img_width, img_height, x1, y1, x2, y2)
-        # 변환된 yolo 좌표를 object 별로 출력 text 파일에 write
-        value_str = ('{0} {1} {2} {3} {4}').format(class_id, cx_norm, cy_norm, w_norm, h_norm)
-        output_fpointer.write(value_str+'\n')
-        # debugging용으로 아래 출력
-        #print(object_name, value_str)
+def make_yolo_anno_file(df, tgt_images_dir, tgt_labels_dir):
+  for index, row in df.iterrows():
+    src_image_path = row['img_filepath']
+    src_label_path = row['anno_filepath']
+    # 이미지 1개당 단 1개의 오브젝트만 존재하므로 class_name을 object_name으로 설정.  
+    object_name = row['class_name']
+    # yolo format으로 annotation할 txt 파일의 절대 경로명을 지정. 
+    target_label_path = tgt_labels_dir + row['img_name']+'.txt'
+    # image의 경우 target images 디렉토리로 단순 copy
+    shutil.copy(src_image_path, tgt_images_dir)
+    # annotation의 경우 xml 파일을 target labels 디렉토리에 Ultralytics Yolo format으로 변환하여  만듬
+    xml_to_txt(src_label_path, target_label_path, object_name)
 
-# object_name과 원본 좌표를 입력하여 Yolo 포맷으로 변환
-def convert_yolo_coord(object_name, img_width, img_height, x1, y1, x2, y2):
-  # class_id는 CLASS_NAMES 리스트에서 index 번호로 추출. 
-  class_id = CLASS_NAMES.index(object_name)
-  # 중심 좌표와 너비, 높이 계산. 
-  center_x = (x1 + x2)/2
-  center_y = (y1 + y2)/2
-  width = x2 - x1
-  height = y2 - y1
-  # 원본 이미지 기준으로 중심 좌표와 너비 높이를 0-1 사이 값으로 scaling
-  center_x_norm = center_x / img_width
-  center_y_norm = center_y / img_height
-  width_norm = width / img_width
-  height_norm = height / img_height
-
-  return class_id, round(center_x_norm, 7), round(center_y_norm, 7), round(width_norm, 7), round(height_norm, 7)
-
+# train용 images와 labels annotation 생성. 
+make_yolo_anno_file(train_df, '/content/ox_pet/images/train/', '/content/ox_pet/labels/train/')
+# val용 images와 labels annotation 생성. 
+make_yolo_anno_file(val_df, '/content/ox_pet/images/val/', '/content/ox_pet/labels/val/')
 
 
 !wget -O /content/ox_pet/ox_pet.yaml https://raw.githubusercontent.com/chulminkw/DLCV/master/data/util/ox_pet.yaml
