@@ -9,3 +9,6 @@
                   --input-format VOCSEGM --output-format COCO --copy
 
 !pip install opencv-python==4.1.2.30
+
+
+#Dataset-Converters는 OpenCV 이전 버전을 요구하기 때문에 requirements대로 down grade 시킨 후 마지막에 다시 최신 버전으로 업데이트 해 준다.
